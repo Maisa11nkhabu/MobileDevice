@@ -1,8 +1,18 @@
-import React, { useMemo, useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Platform, TextInput } from "react-native";
+import React, { useContext, useState, useMemo } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Video } from "expo-av";
 import { FontAwesome } from "@expo/vector-icons";
+import { Video } from "expo-av";
+import { ThemeContext } from "../theme/ThemeContext";
 
 const COURSES_BY_FACULTY = {
   "Faculty of Information Technology": [
@@ -148,6 +158,7 @@ const COURSES_BY_FACULTY = {
 };
 
 export default function CourseScreen({ route }) {
+  const { colors } = useContext(ThemeContext);
   const facultyName = route?.params?.facultyName || "Faculty";
   const courses = COURSES_BY_FACULTY[facultyName] || [
     { name: "No courses", description: "Courses for this faculty are not yet listed." },
@@ -166,15 +177,6 @@ export default function CourseScreen({ route }) {
     });
   }, [courses, search]);
 
-  const courseCountLabel = useMemo(() => {
-    const total = courses.length;
-    const visible = filteredCourses.length;
-    if (!search.trim()) {
-      return `${total} course${total === 1 ? "" : "s"}`;
-    }
-    return `${visible} of ${total} course${total === 1 ? "" : "s"} found`;
-  }, [courses.length, filteredCourses.length, search]);
-
   const increaseRating = (courseKey) => {
     setRatings((prev) => {
       const current = prev[courseKey] ?? 0;
@@ -184,39 +186,25 @@ export default function CourseScreen({ route }) {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        <View style={styles.headerCard}>
-          <Text style={styles.headerTitle}>{facultyName}</Text>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.bg }]}>
+      <ScrollView style={[styles.container, { backgroundColor: colors.bg }]} contentContainerStyle={styles.content}>
+        <View style={[styles.headerCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{facultyName}</Text>
 
-          <View style={styles.searchRow}>
-            <FontAwesome
-              name="search"
-              size={16}
-              color={stylesVars.muted}
-              style={styles.searchIcon}
-            />
+          <View style={[styles.searchRow, { backgroundColor: colors.bg }]}>
+            <FontAwesome name="search" size={16} color={colors.muted} />
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, { color: colors.text }]}
               placeholder="Search courses..."
-              placeholderTextColor={stylesVars.muted}
+              placeholderTextColor={colors.muted}
               value={search}
               onChangeText={setSearch}
-              autoCapitalize="none"
-              autoCorrect={false}
             />
             {search.length > 0 && (
-              <TouchableOpacity onPress={() => setSearch("")} style={styles.clearButton}>
-                <FontAwesome name="times-circle" size={16} color={stylesVars.muted} />
+              <TouchableOpacity onPress={() => setSearch("")}>
+                <FontAwesome name="times-circle" size={16} color={colors.muted} />
               </TouchableOpacity>
             )}
-          </View>
-
-          <View style={styles.headerMetaRow}>
-            <View style={styles.pill}>
-              <Text style={styles.pillText}>{courseCountLabel}</Text>
-            </View>
-            <Text style={styles.headerSubtitle}>Tap “Rate course” to add a star</Text>
           </View>
         </View>
 
@@ -226,47 +214,39 @@ export default function CourseScreen({ route }) {
           const canRate = rating < 6;
 
           return (
-            <View key={courseKey} style={styles.card}>
+            <View key={courseKey} style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
               {course.image ? (
                 <Image source={course.image} style={styles.image} />
               ) : (
                 <View style={styles.imagePlaceholder}>
-                  <FontAwesome name="graduation-cap" size={28} color={stylesVars.muted} />
-                  <Text style={styles.imagePlaceholderText}>No image</Text>
+                  <FontAwesome name="graduation-cap" size={28} color={colors.muted} />
+                  <Text style={[styles.imagePlaceholderText, { color: colors.muted }]}>No image</Text>
                 </View>
               )}
-
               <View style={styles.cardBody}>
-                <Text style={styles.title}>{course.name}</Text>
-                <Text style={styles.description}>{course.description}</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{course.name}</Text>
+                <Text style={[styles.description, { color: colors.muted }]}>{course.description}</Text>
 
-                {course.video ? (
+                {course.video && (
                   <View style={styles.videoWrap}>
-                    <Video
-                      source={course.video}
-                      style={styles.video}
-                      useNativeControls
-                      resizeMode="contain"
-                    />
+                    <Video source={course.video} style={styles.video} useNativeControls resizeMode="contain" />
                   </View>
-                ) : null}
+                )}
 
                 <View style={styles.ratingRow}>
-                  <Text style={styles.ratingLabel}>Rating</Text>
+                  <Text style={[styles.ratingLabel, { color: colors.text }]}>Rating</Text>
                   <View style={styles.stars}>
                     {Array.from({ length: 6 }).map((_, i) => (
                       <FontAwesome
                         key={i}
                         name={i < rating ? "star" : "star-o"}
                         size={16}
-                        color={i < rating ? stylesVars.accent : stylesVars.muted}
+                        color={i < rating ? colors.accent : colors.muted}
                         style={styles.star}
                       />
                     ))}
                   </View>
-                  <Text style={styles.ratingValue}>
-                    {rating}/6
-                  </Text>
+                  <Text style={[styles.ratingValue, { color: colors.text }]}>{rating}/6</Text>
                 </View>
 
                 <TouchableOpacity
@@ -288,174 +268,30 @@ export default function CourseScreen({ route }) {
   );
 }
 
-const stylesVars = {
-  bg: "whitesmoke",
-  card: "white",
-  text: "black",
-  muted: "slategray",
-  accent: "royalblue",
-  border: "lightgray",
-};
-
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: stylesVars.bg },
-  container: { flex: 1, backgroundColor: stylesVars.bg },
+  safeArea: { flex: 1 },
+  container: { flex: 1 },
   content: { padding: 16, paddingBottom: 28 },
-  headerCard: {
-    backgroundColor: stylesVars.card,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: stylesVars.border,
-    shadowColor: "black",
-    shadowOpacity: 0.06,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: stylesVars.text,
-    letterSpacing: 0.2,
-  },
-  headerMetaRow: {
-    marginTop: 10,
-    gap: 10,
-  },
-  pill: {
-    alignSelf: "flex-start",
-    backgroundColor: "#EEF2FF",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-  pillText: {
-    color: stylesVars.accent,
-    fontWeight: "700",
-    fontSize: 12,
-  },
-  headerSubtitle: {
-    color: stylesVars.muted,
-    fontSize: 13,
-  },
-  searchRow: {
-    marginTop: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: "whitesmoke",
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 13,
-    color: stylesVars.text,
-    paddingVertical: 0,
-  },
-  clearButton: {
-    marginLeft: 6,
-  },
-  card: {
-    backgroundColor: stylesVars.card,
-    marginBottom: 14,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: stylesVars.border,
-    overflow: Platform.OS === "android" ? "hidden" : "visible",
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
-  },
-  cardBody: {
-    padding: 14,
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: "800",
-    color: stylesVars.text,
-    letterSpacing: 0.2,
-  },
-  description: {
-    marginTop: 6,
-    color: stylesVars.muted,
-    fontSize: 13.5,
-    lineHeight: 19,
-  },
-  image: {
-    width: "100%",
-    height: 170,
-  },
-  imagePlaceholder: {
-    width: "100%",
-    height: 170,
-    backgroundColor: "whitesmoke",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-  },
-  imagePlaceholderText: {
-    color: stylesVars.muted,
-    fontWeight: "600",
-  },
-  videoWrap: {
-    marginTop: 12,
-    borderRadius: 14,
-    overflow: "hidden",
-    backgroundColor: "black",
-  },
-  video: {
-    width: "100%",
-    height: 190,
-  },
-  ratingRow: {
-    marginTop: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  ratingLabel: {
-    fontSize: 13,
-    color: stylesVars.text,
-    fontWeight: "700",
-  },
-  stars: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  star: {
-    marginRight: 4,
-  },
-  ratingValue: {
-    marginLeft: "auto",
-    fontSize: 13,
-    fontWeight: "800",
-    color: stylesVars.text,
-  },
-  primaryButton: {
-    marginTop: 12,
-    backgroundColor: stylesVars.accent,
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  primaryButtonDisabled: {
-    backgroundColor: "lightsteelblue",
-  },
-  primaryButtonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "800",
-    letterSpacing: 0.2,
-  },
-  primaryButtonTextDisabled: {
-    color: "darkblue",
-  },
+  headerCard: { borderRadius: 16, padding: 16, marginBottom: 14, borderWidth: 1, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 8 }, elevation: 2 },
+  headerTitle: { fontSize: 22, fontWeight: "800", letterSpacing: 0.2 },
+  searchRow: { marginTop: 12, flexDirection: "row", alignItems: "center", paddingHorizontal: 10, paddingVertical: 8, borderRadius: 999 },
+  searchInput: { flex: 1, fontSize: 13, paddingVertical: 0 },
+  card: { marginBottom: 14, borderRadius: 16, borderWidth: 1, overflow: Platform.OS === "android" ? "hidden" : "visible", shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 8 }, elevation: 2 },
+  cardBody: { padding: 14 },
+  title: { fontSize: 17, fontWeight: "800", letterSpacing: 0.2 },
+  description: { marginTop: 6, fontSize: 13.5, lineHeight: 19 },
+  image: { width: "100%", height: 170 },
+  imagePlaceholder: { width: "100%", height: 170, alignItems: "center", justifyContent: "center", gap: 6 },
+  imagePlaceholderText: { fontWeight: "600" },
+  videoWrap: { marginTop: 12, borderRadius: 14, overflow: "hidden", backgroundColor: "black" },
+  video: { width: "100%", height: 190 },
+  ratingRow: { marginTop: 12, flexDirection: "row", alignItems: "center", gap: 10 },
+  ratingLabel: { fontSize: 13, fontWeight: "700" },
+  stars: { flexDirection: "row", alignItems: "center" },
+  star: { marginRight: 4 },
+  ratingValue: { marginLeft: "auto", fontSize: 13, fontWeight: "800" },
+  primaryButton: { marginTop: 12, paddingVertical: 12, borderRadius: 12, alignItems: "center", backgroundColor: "lightblue"},
+  primaryButtonDisabled: { backgroundColor: "lightsteelblue" },
+  primaryButtonText: { fontSize: 14, fontWeight: "800", letterSpacing: 0.2 },
+  primaryButtonTextDisabled: { color: "darkblue" },
 });

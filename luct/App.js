@@ -5,6 +5,7 @@ import { ThemeProvider } from "./theme/ThemeContext";
 
 import FacultyScreen from "./screens/FacultyScreen";
 import CourseScreen from "./screens/CourseScreen";
+import RecommendationScreen from "./screens/RecommendationScreen"; // ⭐ NEW
 
 const Stack = createNativeStackNavigator();
 
@@ -12,16 +13,26 @@ export default function App() {
   return (
     <ThemeProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Faculty">
+        <Stack.Navigator
+          initialRouteName="Faculty"
+          screenOptions={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        >
           <Stack.Screen
             name="Faculty"
             component={FacultyScreen}
-            options={{ headerShown: false }}
           />
+
           <Stack.Screen
             name="Courses"
             component={CourseScreen}
-            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="Recommend"
+            component={RecommendationScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>

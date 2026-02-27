@@ -33,8 +33,6 @@ const QUESTIONS = [
   },
 ];
 
-/* ---------------- RECOMMENDATION LOGIC ---------------- */
-
 function recommendCourse(answers) {
   if (answers.interest === "Technology" && answers.math === "Strong") {
     return "BSc in Software Engineering With Multimedia";
@@ -75,7 +73,7 @@ export default function RecommendationScreen({ navigation }) {
     return recommendCourse(answers);
   }, [finished, answers]);
 
-  /* ---------- HANDLE ANSWER ---------- */
+  /* handle answer */
 
   const selectOption = (option) => {
     const updated = { ...answers, [question.id]: option };
@@ -88,7 +86,7 @@ export default function RecommendationScreen({ navigation }) {
     }
   };
 
-  /* ---------- RESULT SCREEN ---------- */
+  /* result screen */
 
   if (finished) {
     return (
@@ -124,7 +122,7 @@ export default function RecommendationScreen({ navigation }) {
     );
   }
 
-  /* ---------- QUESTION SCREEN ---------- */
+  /* question screen */
 
   return (
     <SafeAreaView
@@ -162,7 +160,7 @@ export default function RecommendationScreen({ navigation }) {
   );
 }
 
-/* ---------------- STYLES ---------------- */
+/* styles */
 
 const styles = StyleSheet.create({
   safeArea: {

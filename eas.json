@@ -9,31 +9,18 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      },
-      "ios": {
-        "buildConfiguration": "Debug"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      },
-      "ios": {
-        "buildConfiguration": "Release"
       }
     },
     "production": {
       "autoIncrement": true,
       "android": {
-        "buildType": "app-bundle", 
-        "gradleCommand": ":app:assembleRelease"
-      },
-      "ios": {
-        "buildConfiguration": "Release"
-      },
-      "env": {
-        "NODE_ENV": "production"
+        "buildType": "app-bundle"
       }
     }
   },
@@ -41,10 +28,6 @@
     "production": {
       "android": {
         "track": "internal"
-      },
-      "ios": {
-        "appleId": "<YOUR_APPLE_ID>",
-        "ascAppId": "<YOUR_IOS_APP_ID>"
       }
     }
   }

@@ -171,7 +171,7 @@ export default function CourseScreen({ route }) {
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  /* LOAD SAVED DATA */
+  /* Load saved data */
   useEffect(() => {
     const loadData = async () => {
       const savedRatings = await AsyncStorage.getItem("ratings");
@@ -183,7 +183,7 @@ export default function CourseScreen({ route }) {
     loadData();
   }, []);
 
-  /* FILTER */
+  /* filter */
   const filteredCourses = useMemo(() => {
     const query = search.trim().toLowerCase();
     if (!query) return courses;
@@ -195,7 +195,7 @@ export default function CourseScreen({ route }) {
     });
   }, [courses, search]);
 
-  /* RATING */
+  /* rating */
   const increaseRating = async (courseKey) => {
     setRatings((prev) => {
       const current = prev[courseKey] ?? 0;
@@ -207,7 +207,7 @@ export default function CourseScreen({ route }) {
     });
   };
 
-  /* FAVORITE TOGGLE WITH ANIMATION */
+  /* favourite icon animation */
   const toggleFavorite = async (courseKey, courseData) => {
     Animated.sequence([
       Animated.timing(scaleAnim, {
@@ -242,7 +242,7 @@ export default function CourseScreen({ route }) {
         style={[styles.container, { backgroundColor: colors.bg }]}
         contentContainerStyle={styles.content}
       >
-        {/* HEADER */}
+        /* header */
         <View
           style={[
             styles.headerCard,
@@ -265,7 +265,7 @@ export default function CourseScreen({ route }) {
           </View>
         </View>
 
-        {/* COURSE CARDS */}
+        /* Course cards */
         {filteredCourses.map((course, index) => {
           const courseKey = `${facultyName}:${index}`;
           const rating = ratings[courseKey] ?? 0;
@@ -280,7 +280,7 @@ export default function CourseScreen({ route }) {
                 { backgroundColor: colors.card, borderColor: colors.border },
               ]}
             >
-              {/* HEART */}
+              /* heart icon */
               <TouchableOpacity
                 style={styles.heartIcon}
                 onPress={() =>
@@ -361,7 +361,7 @@ export default function CourseScreen({ route }) {
   );
 }
 
-/* STYLES */
+/* styles */
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   container: { flex: 1 },

@@ -13,7 +13,7 @@ import RecommendationScreen from "./screens/RecommendationScreen";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-/* ---------- HOME STACK (Inside Tab) ---------- */
+/* home stack */
 function HomeStack() {
   return (
     <Stack.Navigator
@@ -40,7 +40,7 @@ function HomeStack() {
   );
 }
 
-/* ---------- BOTTOM TABS ---------- */
+/* bottom tabs */
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -74,7 +74,7 @@ function MainTabs() {
   );
 }
 
-/* ---------- APP ROOT ---------- */
+/* applicatin routee */
 export default function App() {
   return (
     <ThemeProvider>

@@ -83,7 +83,7 @@ export default function FavoritesScreen() {
   );
 }
 
-/* ---------- STYLES ---------- */
+/* styles */
 
 const styles = StyleSheet.create({
   safeArea: {
